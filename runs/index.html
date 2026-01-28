@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Neverwinter – Runy SoD</title>
+<style>
+    body {
+        background: #1b1b1b;
+        color: #eee;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    h1 { margin-top: 20px; }
+    #question img {
+        width: 200px;
+        margin: 20px;
+        border: 3px solid #555;
+        border-radius: 10px;
+    }
+    .answers {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .answers img {
+        width: 140px;
+        cursor: pointer;
+        border: 3px solid #555;
+        border-radius: 10px;
+        transition: 0.2s;
+    }
+    .answers img:hover {
+        border-color: gold;
+        transform: scale(1.05);
+    }
+    .correct { border-color: #00ff00 !important; }
+    .wrong { border-color: #ff0000 !important; }
+    #result {
+        font-size: 22px;
+        margin-top: 20px;
+        height: 30px;
+    }
+    button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Neverwinter – Runy Trial SoD</h1>
+
+<div id="question"></div>
+
+<div class="answers" id="answers"></div>
+
+<div id="result"></div>
+
+<button onclick="newQuestion()">Następna runa</button>
+
+<script>
+const runes = {
+    conjuration: "horns",
+    abjuration: "fork",
+    evocation: "window",
+    illusion: "eye",
+    transmutation: "towers",
+    enchantment: "cross",
+    divination: "pipe",
+    necromancy: "hat"
+};
+
+let correctAnswer = "";
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function newQuestion() {
+    document.getElementById("result").innerText = "";
+    document.getElementById("answers").innerHTML = "";
+
+    const runeNames = Object.keys(runes);
+    const rune = runeNames[Math.floor(Math.random() * runeNames.length)];
+    correctAnswer = runes[rune];
+
+    document.getElementById("question").innerHTML =
+        `<h2>by Houston Guild PolishDomination</h2>
+         <img src="img/${rune}.png">`;
+
+    let options = [correctAnswer];
+    while (options.length < 4) {
+        const random = Object.values(runes)[Math.floor(Math.random() * 8)];
+        if (!options.includes(random)) options.push(random);
+    }
+
+    shuffle(options);
+
+    options.forEach(opt => {
+        const img = document.createElement("img");
+        img.src = `img/${opt}.png`;
+        img.onclick = () => checkAnswer(img, opt);
+        document.getElementById("answers").appendChild(img);
+    });
+}
+
+function checkAnswer(img, answer) {
+    const imgs = document.querySelectorAll(".answers img");
+    imgs.forEach(i => i.onclick = null);
+
+    if (answer === correctAnswer) {
+        img.classList.add("correct");
+        document.getElementById("result").innerText = "✅ Dobrze!";
+    } else {
+        img.classList.add("wrong");
+        document.getElementById("result").innerText = "❌ Źle!";
+        imgs.forEach(i => {
+            if (i.src.includes(correctAnswer)) {
+                i.classList.add("correct");
+            }
+        });
+    }
+}
+
+newQuestion();
+</script>
+
+</body>
+</html>
